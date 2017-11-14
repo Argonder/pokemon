@@ -31,3 +31,12 @@ CREATE TABLE dresseur (
   PRIMARY KEY (id),
   UNIQUE `u_email` (`email`) USING BTREE
 );
+
+CREATE TABLE auth_dresseur (
+  id INTEGER NOT NULL AUTO_INCREMENT,
+  id_dresseur INTEGER NOT NULL,
+  last_connection DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  token VARCHAR(128) NOT NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (id_dresseur) REFERENCES dresseur(id) ON DELETE CASCADE
+);
