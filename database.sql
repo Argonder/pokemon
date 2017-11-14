@@ -19,3 +19,15 @@ create table pokemon (
 );
 
 ALTER TABLE `pokemon` ADD (img_url VARCHAR(255));
+
+CREATE TABLE dresseur (
+  id INTEGER NOT NULL AUTO_INCREMENT,
+  email VARCHAR(255) NOT NULL,
+  nom VARCHAR(50) NOT NULL,
+  password VARCHAR(255) NOT NULL,
+  date_inscription DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  date_naissance DATE,
+  genre ENUM('masculin', 'feminin', 'non precisé'),
+  PRIMARY KEY (id),
+  UNIQUE `u_email` (`email`) USING BTREE
+);
