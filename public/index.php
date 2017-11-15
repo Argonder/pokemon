@@ -7,6 +7,21 @@ require_once('../resources/function.php');
 $errors = [];
 $form_errors = [];
 
+
+// Déconnexion
+if (formIsSubmit('form_deconnexion')) {
+  // Détruit toutes les variables de la session
+  session_unset();
+  // Détruit toutes les données associées à la session courante
+  session_destroy();
+}
+
+// Si utilisateur connecté redirection vers liste.php
+if (isset($_SESSION['id'])) {
+  header("location: liste.php");
+  return;
+}
+
 /*
 // Envoi d'un mail :
 // Dans php.ini configurer sendmail_path = "C:\xampp\mailtodisk\mailtodisk.exe"
@@ -26,7 +41,7 @@ if (formIsSubmit('signin_form')) {
 
   // Récupération des valeurs du formulaire
   $email = $_POST['email'];
-  $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+  $password = $_POST['password'];
   $remember = intVal($_POST['remember-me'] ?? 0);
 
   // Vérification des saisies
@@ -45,7 +60,7 @@ if (formIsSubmit('signin_form')) {
     $query->execute();
     $user = $query->fetch();
 
-    if (!$user || password_verify($password, $user['password'])) {
+    if (!$user || !password_verify($password, $user['password'])) {
       // Ne soyons pas trop précis sur l'errreur pour éviter de donner des indices aux attaquants
       $form_errors['email'] = "Email non trouvé ou mot de passe invalide";
     } else {
@@ -57,8 +72,8 @@ if (formIsSubmit('signin_form')) {
       //$_SESSION['token'] = sha1(time() . rand() . $_SERVER['SERVER_NAME']);
       //setcookie('token', $_SESSION['token']);
       // In practice, you'd want to store this token in a database with the username so it's persistent.
-      showMessage("Connexion réussie");
       header("location: liste.php");
+      return;
     }
   }
 
@@ -101,15 +116,17 @@ if (formIsSubmit('signup_form')) {
       // Ici tout est valide, l'insertion peut être faite
       $query = $db->prepare("
         INSERT INTO dresseur(email,  nom,  password)
-          VALUES            (:email, :nom, :password)"
-      );
+          VALUES            (:email, :nom, :password)
+      ");
       $query->bindValue(':email', $email, PDO::PARAM_STR);
       $query->bindValue(':nom', $nom, PDO::PARAM_STR);
       $query->bindValue(':password', $hashPassword, PDO::PARAM_STR);
       if (!$query->execute())
         showMessage("Erreurs lors de l'inscription : " . implode($query->errorInfo()), 'alert-danger');
-      else
-        showMessage("Inscription OK");
+      else {
+        header("location: liste.php");
+        return;
+      }
     }
   }
 }

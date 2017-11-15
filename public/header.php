@@ -15,6 +15,14 @@
     <script src="components/bootstrap/js/bootstrap.min.js"></script>
 </head>
 <body>
+  <?php if (isset($_SESSION['id'])) : ?>
+  <div class="text-right">
+    <form action="index.php" method="post">
+      <input type="hidden" name="form_deconnexion" value="1"/>
+      <button class="btn btn-secondary" type="submit">Deconnexion</button>
+    </form>
+  </div>
+  <?php endif; ?>
   <div class="text-center">
     <img src="img/pokemon.png" alt="" style="width: 30%;">
   </div>
